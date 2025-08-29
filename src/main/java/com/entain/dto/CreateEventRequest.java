@@ -1,6 +1,5 @@
 package com.entain.dto;
 
-import com.entain.data.SportType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

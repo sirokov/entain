@@ -8,7 +8,6 @@ import com.entain.data.access.SportEventDAO;
 import com.entain.exception.EventNotFoundException;
 import com.entain.exception.InvalidStatusChangeException;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;

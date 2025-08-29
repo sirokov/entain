@@ -3,7 +3,6 @@ package com.entain.service;
 import com.entain.config.SportsConfig;
 import com.entain.data.SportType;
 import org.springframework.stereotype.Service;
-
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;

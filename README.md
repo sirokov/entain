@@ -24,7 +24,7 @@ making it lightweight and easy to run.
 
 ## Technical Stack
 
-- Java 17+
+- Java 17
 - Spring Boot 3+
 - Lombok
 - Springdoc OpenAPI for API documentation
@@ -50,6 +50,9 @@ The project is designed with **flexibility and future extensibility** in mind:
 
 5. **OpenAPI Documentation**  
    All endpoints, request bodies, and responses are documented using OpenAPI annotations. This ensures clients can understand and integrate with the API easily.
+
+6. **Extensible Sport Types**  
+   Supported sports are **configured externally** via the `application.yml` file. This allows new sports to be added dynamically without changing the source code, making it easy to extend the list of available sports as needed.
 
 ---
 
