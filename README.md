@@ -56,6 +56,33 @@ The project is designed with **flexibility and future extensibility** in mind:
 
 ---
 
+## Event-Driven Architecture & SSE Extensibility
+
+The project uses a **domain event-driven approach** to decouple business logic from delivery mechanisms like SSE:
+
+1. **Domain Events**  
+   Meaningful changes in the domain, such as `SportEventCreated` or `SportEventStatusChanged`, are represented as `DomainEvent` objects.  
+   Services publish these events when something important happens.
+
+2. **DomainEventPublisher**  
+   A dedicated publisher (`DomainEventPublisher`) wraps Spring's `ApplicationEventPublisher`.  
+   This allows services like `SportEventService` to publish events **without knowing who consumes them**.
+
+3. **Listeners for Event Handling**  
+   Components like `SportEventSseListener` subscribe to domain events using Spring’s `@EventListener`.  
+   They handle the events and push updates to clients via SSE.
+
+4. **Decoupling & Extensibility**
+    - Business logic does not depend on SSE or any transport protocol.
+    - Adding new channels (e.g., Kafka, RabbitMQ, WebSocket) requires **only a new listener**, without changing existing service logic.
+    - This makes the system highly extensible and easy to integrate with additional messaging platforms.
+
+5. **Future-Proof Design**
+    - Any other part of the system can subscribe to the same domain events.
+    - For example, you could log all events, trigger emails, or forward them to external services, all **without modifying core services**.
+
+---
+
 ## Frontend Dashboard
 
 A simple **HTML + JavaScript dashboard** is included for demonstration purposes.  
