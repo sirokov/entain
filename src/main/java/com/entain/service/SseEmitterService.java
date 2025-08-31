@@ -43,4 +43,8 @@ public class SseEmitterService {
             }
         });
     }
+
+    List<SseEmitter> getEmitters() {
+        return emitters;
+    }
 }

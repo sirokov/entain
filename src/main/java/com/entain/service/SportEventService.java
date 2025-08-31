@@ -5,6 +5,9 @@ import com.entain.data.EventStatus;
 import com.entain.data.SportEvent;
 import com.entain.data.SportType;
 import com.entain.data.access.SportEventDAO;
+import com.entain.event.DomainEventPublisher;
+import com.entain.event.SportEventCreated;
+import com.entain.event.SportEventStatusChanged;
 import com.entain.exception.EventNotFoundException;
 import com.entain.exception.InvalidStatusChangeException;
 import org.springframework.stereotype.Service;
@@ -20,22 +23,21 @@ import static com.entain.config.EntainConstant.*;
 public class SportEventService {
 
     private final SportEventDAO sportEventDAO;
-    private final SseEmitterService sseEmitterService;
     private final SportsConfig sportsConfig;
+    private final DomainEventPublisher eventPublisher;
 
     public SportEventService(SportEventDAO sportEventDAO,
-                             SseEmitterService sseEmitterService,
-                             SportsConfig sportsConfig) {
+                             SportsConfig sportsConfig, DomainEventPublisher eventPublisher) {
         this.sportEventDAO = sportEventDAO;
-        this.sseEmitterService = sseEmitterService;
         this.sportsConfig = sportsConfig;
+        this.eventPublisher = eventPublisher;
     }
 
     public SportEvent createEvent(SportEvent event) {
         validateSport(event.getSport());
         event.setId(UUID.randomUUID());
         sportEventDAO.save(event);
-        sseEmitterService.emitUpdate(event);
+        eventPublisher.publish(new SportEventCreated(event));
         return event;
     }
 
@@ -53,10 +55,17 @@ public class SportEventService {
         validateStatusChange(event, newStatus);
         sportEventDAO.updateStatus(id, newStatus);
         event.setStatus(newStatus);
-        sseEmitterService.emitUpdate(event);
+
+        eventPublisher.publish(new SportEventStatusChanged(
+                event.getId(),
+                newStatus,
+                event.getName(),
+                event.getSport(),
+                event.getStartTime()
+        ));
+
         return event;
     }
-
     private void validateStatusChange(SportEvent event, EventStatus newStatus) {
         switch (event.getStatus()) {
             case INACTIVE -> {
