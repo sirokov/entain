@@ -2,7 +2,9 @@ package com.entain.event;
 
 import com.entain.data.SportEvent;
 import com.entain.service.SseEmitterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
  * This approach decouples the business logic in {@link com.entain.service.SportEventService} from the delivery mechanism (SSE),
  * making it easier to extend the system in the future (e.g., sending events to Kafka, WebSocket, or other channels).
  */
+@Slf4j
 @Service
 public class SportEventSseListener {
 
@@ -37,8 +40,12 @@ public class SportEventSseListener {
      *
      * @param event the domain event representing the creation of a new SportEvent
      */
+    @Async("eventExecutor")
     @EventListener
     public void onEventCreated(SportEventCreated event) {
+        if (log.isDebugEnabled()) {
+            log.debug("Handling SportEventCreated in thread: {}", Thread.currentThread().getName());
+        }
         sseEmitterService.emitUpdate(event.event());
     }
 
@@ -50,8 +57,12 @@ public class SportEventSseListener {
      *
      * @param event the domain event representing the status change of a SportEvent
      */
+    @Async("eventExecutor")
     @EventListener
     public void onEventStatusChanged(SportEventStatusChanged event) {
+        if (log.isDebugEnabled()) {
+            log.debug("Handling SportEventStatusChanged in thread: {}", Thread.currentThread().getName());
+        }
         sseEmitterService.emitUpdate(
                 new SportEvent(
                         event.eventId(),

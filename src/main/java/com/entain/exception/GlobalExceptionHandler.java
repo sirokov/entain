@@ -50,4 +50,10 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
+
+    @ExceptionHandler(AsyncTaskRejectedException.class)
+    public ResponseEntity<String> handleAsyncRejected(AsyncTaskRejectedException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(TASK_REJECTED + ex.getMessage());
+    }
 }
