@@ -12,6 +12,7 @@ public interface EntainConstant {
     String INVALID_SPORT =  "Invalid sport: ";
     String ALLOWED =  ". Allowed: ";
     String THREAD_POOL_FULL_ERROR =  "Async task rejected: thread pool is full! Active threads: ";
+    String QUEUE_SIZE =  ", Queue size: ";
     String TASK_REJECTED = "Async task rejected";
 
 

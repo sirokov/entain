@@ -20,20 +20,22 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class SportEventListenerAsyncTest {
 
+    private static final String FOOTBALL = "football";
+    private static final String EVENT_NAME = "Chelsea vs Arsenal";
+
     @InjectMocks
     private SportEventSseListener sportEventSseListener;
 
     @Mock
     private SseEmitterService sseEmitterService;
 
-
     @Test
     void shouldHandleSportEventCreatedAsync() {
         // given
         SportEvent event = new SportEvent(
                 UUID.randomUUID(),
-                "Chelsea vs Arsenal",
-                "football",
+                EVENT_NAME,
+                FOOTBALL,
                 EventStatus.INACTIVE,
                 LocalDateTime.now().plusDays(1)
         );
@@ -55,8 +57,8 @@ class SportEventListenerAsyncTest {
         SportEventStatusChanged statusChanged = new SportEventStatusChanged(
                 id,
                 EventStatus.ACTIVE,
-                "Real vs Barca",
-                "football",
+                EVENT_NAME,
+                FOOTBALL,
                 LocalDateTime.now().plusHours(2)
         );
 
