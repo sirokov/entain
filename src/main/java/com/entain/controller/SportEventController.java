@@ -30,12 +30,10 @@ public class SportEventController {
 
     private final SportEventService service;
     private final SseEmitterService sseEmitterService;
-    private final SportValidationService sportValidationService;
 
-    public SportEventController(SportEventService service, SseEmitterService sseEmitterService, SportValidationService sportValidationService) {
+    public SportEventController(SportEventService service, SseEmitterService sseEmitterService) {
         this.service = service;
         this.sseEmitterService = sseEmitterService;
-        this.sportValidationService = sportValidationService;
     }
 
 
