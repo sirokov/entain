@@ -159,7 +159,9 @@ class SportEventControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(SPORT_EVENT + eventId + NOT_FOUND));
+                .andExpect(jsonPath("$.message")
+                        .value("Sport event with id " + eventId + " not found"))
+                .andExpect(jsonPath("$.status").value(404));
     }
 
     @Test
@@ -172,7 +174,9 @@ class SportEventControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(EXPECT_INVALID_STATUS));
+                .andExpect(jsonPath("$.message")
+                        .value(EXPECT_INVALID_STATUS))
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -180,7 +184,9 @@ class SportEventControllerTest {
         mockMvc.perform(patch("/events/{id}/status", eventId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(INVALID_REQUEST_BODY));
+                .andExpect(jsonPath("$.message")
+                        .value(INVALID_REQUEST_BODY))
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
