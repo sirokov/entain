@@ -57,7 +57,7 @@
 
 <script>
     const STORAGE_KEY = "sportEvents";
-    const CACHE_TTL_MS = 30 * 1000; // 30 секунд
+    const CACHE_TTL_MS = 30 * 1000;
     const tableBody = document.getElementById("eventsTableBody");
     const eventsMap = new Map();
 
@@ -74,7 +74,7 @@
         if (!raw) return null;
         try {
             const parsed = JSON.parse(raw);
-            // Проверка TTL
+
             if (Date.now() - parsed.timestamp > CACHE_TTL_MS) {
                 console.log("LocalStorage cache expired, ignoring.");
                 return null;
