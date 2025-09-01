@@ -3,6 +3,7 @@ package com.entain.controller;
 import com.entain.data.EventStatus;
 import com.entain.data.SportEvent;
 import com.entain.dto.CreateEventRequest;
+import com.entain.dto.ErrorResponse;
 import com.entain.dto.SportEventResponse;
 import com.entain.dto.UpdateStatusRequest;
 import com.entain.service.SportEventService;
@@ -44,7 +45,8 @@ public class SportEventController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Event created successfully",
                             content = @Content(schema = @Schema(implementation = SportEventResponse.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
+                    @ApiResponse(responseCode = "400", description = "Invalid request",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping
@@ -91,7 +93,8 @@ public class SportEventController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Event found",
                             content = @Content(schema = @Schema(implementation = SportEventResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
+                    @ApiResponse(responseCode = "404", description = "Event not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @GetMapping("/{id}")
@@ -109,8 +112,10 @@ public class SportEventController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Status updated",
                             content = @Content(schema = @Schema(implementation = SportEventResponse.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid status change", content = @Content),
-                    @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
+                    @ApiResponse(responseCode = "400", description = "Invalid status change",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "Event not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PatchMapping("/{id}/status")
