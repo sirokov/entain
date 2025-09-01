@@ -39,6 +39,8 @@ class SportEventControllerTest {
     private static final String FOOTBALL = "FOOTBALL";
     private static final String LEAGUE_FINAL = "Champions League Final";
     private static final String INACTIVE = "INACTIVE";
+    private static final String WORLD_FINAL = "World Cup Final";
+    private static final String EXPECT_INVALID_STATUS = "Invalid value for field 'status'. Accepted values: [INACTIVE, ACTIVE, FINISHED]";
 
     private MockMvc mockMvc;
 
@@ -76,7 +78,7 @@ class SportEventControllerTest {
 
     @Test
     void createEvent_success() throws Exception {
-        CreateEventRequest request = new CreateEventRequest("Final Match", FOOTBALL, event.getStartTime());
+        CreateEventRequest request = new CreateEventRequest(WORLD_FINAL, FOOTBALL, event.getStartTime());
         SportEvent createdEvent = new SportEvent(eventId, request.getName(), request.getSport(), EventStatus.INACTIVE, request.getStartTime());
 
         when(service.createEvent(any(SportEvent.class))).thenReturn(createdEvent);
@@ -86,14 +88,14 @@ class SportEventControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(eventId.toString()))
-                .andExpect(jsonPath("$.name").value("Final Match"))
-                .andExpect(jsonPath("$.sport").value("FOOTBALL"))
-                .andExpect(jsonPath("$.status").value("INACTIVE"));
+                .andExpect(jsonPath("$.name").value(WORLD_FINAL))
+                .andExpect(jsonPath("$.sport").value(FOOTBALL))
+                .andExpect(jsonPath("$.status").value(INACTIVE));
     }
 
     @Test
     void getEvents_returnsList() throws Exception {
-        when(service.getEvents(EventStatus.INACTIVE, "FOOTBALL"))
+        when(service.getEvents(EventStatus.INACTIVE, FOOTBALL))
                 .thenReturn(List.of(event));
 
         mockMvc.perform(get("/events")
@@ -108,7 +110,7 @@ class SportEventControllerTest {
     void getEvents_noFilters_returnsAllEvents() throws Exception {
         SportEvent anotherEvent = new SportEvent(
                 UUID.randomUUID(),
-                "World Cup Final",
+                WORLD_FINAL,
                 FOOTBALL,
                 EventStatus.ACTIVE,
                 LocalDateTime.of(2025, 12, 15, 18, 0)
@@ -170,7 +172,7 @@ class SportEventControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid value for field 'status'. Accepted values: [INACTIVE, ACTIVE, FINISHED]"));
+                .andExpect(content().string(EXPECT_INVALID_STATUS));
     }
 
     @Test
