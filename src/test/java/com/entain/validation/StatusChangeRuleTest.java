@@ -16,58 +16,60 @@ class StatusChangeRuleTest {
     private static final String FOOTBALL = "FOOTBALL";
 
     private StatusChangeRule rule;
-    private SportEvent event;
+    private UUID eventId;
+    private String eventName;
+    private String sport;
+    private LocalDateTime futureStartTime;
 
     @BeforeEach
     void setUp() {
         rule = new StatusChangeRule();
-        event = new SportEvent();
-        event.setId(UUID.randomUUID());
-        event.setSport(FOOTBALL);
-        event.setStartTime(LocalDateTime.now().plusHours(1));
+        eventId = UUID.randomUUID();
+        eventName = "Test Match";
+        sport = FOOTBALL;
+        futureStartTime = LocalDateTime.now().plusHours(1);
+    }
+
+    private SportEvent createEvent(EventStatus status, LocalDateTime startTime) {
+        return new SportEvent(eventId, eventName, sport, status, startTime);
     }
 
     @Test
     void inactiveToActive_futureStart_shouldPass() {
-        event.setStatus(EventStatus.INACTIVE);
+        SportEvent event = createEvent(EventStatus.INACTIVE, futureStartTime);
         assertDoesNotThrow(() -> rule.validate(event, EventStatus.ACTIVE));
     }
 
     @Test
     void inactiveToActive_pastStart_shouldThrow() {
-        event.setStatus(EventStatus.INACTIVE);
-        event.setStartTime(LocalDateTime.now().minusHours(1));
-
+        SportEvent event = createEvent(EventStatus.INACTIVE, LocalDateTime.now().minusHours(1));
         assertThrows(InvalidStatusChangeException.class,
                 () -> rule.validate(event, EventStatus.ACTIVE));
     }
 
     @Test
     void inactiveToFinished_shouldThrow() {
-        event.setStatus(EventStatus.INACTIVE);
-
+        SportEvent event = createEvent(EventStatus.INACTIVE, futureStartTime);
         assertThrows(InvalidStatusChangeException.class,
                 () -> rule.validate(event, EventStatus.FINISHED));
     }
 
     @Test
     void activeToFinished_shouldPass() {
-        event.setStatus(EventStatus.ACTIVE);
-
+        SportEvent event = createEvent(EventStatus.ACTIVE, futureStartTime);
         assertDoesNotThrow(() -> rule.validate(event, EventStatus.FINISHED));
     }
 
     @Test
     void activeToInactive_shouldThrow() {
-        event.setStatus(EventStatus.ACTIVE);
-
+        SportEvent event = createEvent(EventStatus.ACTIVE, futureStartTime);
         assertThrows(InvalidStatusChangeException.class,
                 () -> rule.validate(event, EventStatus.INACTIVE));
     }
 
     @Test
     void finishedToAny_shouldThrow() {
-        event.setStatus(EventStatus.FINISHED);
+        SportEvent event = createEvent(EventStatus.FINISHED, futureStartTime);
 
         assertThrows(InvalidStatusChangeException.class,
                 () -> rule.validate(event, EventStatus.INACTIVE));
@@ -76,5 +78,4 @@ class StatusChangeRuleTest {
         assertThrows(InvalidStatusChangeException.class,
                 () -> rule.validate(event, EventStatus.FINISHED));
     }
-
 }

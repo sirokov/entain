@@ -4,6 +4,7 @@ import com.entain.config.SportsConfig;
 import com.entain.data.SportEvent;
 import com.entain.data.SportType;
 import com.entain.exception.InvalidStatusChangeException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -22,17 +23,14 @@ import static com.entain.config.EntainConstant.INVALID_SPORT;
  * <p>Throws {@link InvalidStatusChangeException} if the sport type is invalid.</p>
  */
 @Component
+@RequiredArgsConstructor
 public class SportTypeRule implements BasicEventValidationRule {
 
     private final SportsConfig config;
 
-    public SportTypeRule(SportsConfig config) {
-        this.config = config;
-    }
-
     @Override
     public void validate(SportEvent event) {
-        String sport = event.getSport();
+        String sport = event.sport();
         boolean isValid = Arrays.stream(SportType.values())
                 .anyMatch(s -> s.name().equalsIgnoreCase(sport));
 

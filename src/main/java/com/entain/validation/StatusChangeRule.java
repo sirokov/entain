@@ -26,11 +26,11 @@ public class StatusChangeRule implements EventValidationRule {
 
     @Override
     public void validate(SportEvent event, EventStatus newStatus) {
-        switch (event.getStatus()) {
+        switch (event.status()) {
             case INACTIVE -> {
                 if (newStatus == EventStatus.FINISHED)
                     throw new InvalidStatusChangeException();
-                if (newStatus == EventStatus.ACTIVE && event.getStartTime().isBefore(LocalDateTime.now()))
+                if (newStatus == EventStatus.ACTIVE && event.startTime().isBefore(LocalDateTime.now()))
                     throw new InvalidStatusChangeException();
             }
             case ACTIVE -> {

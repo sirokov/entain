@@ -1,11 +1,13 @@
 package com.entain.service;
 
+import com.entain.data.EventStatus;
 import com.entain.data.SportEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,9 +27,18 @@ class SseEmitterServiceTest {
         service = new SseEmitterService();
     }
 
+    private SportEvent createEvent(String name, String sport) {
+        return new SportEvent(
+                UUID.randomUUID(),
+                name,
+                sport,
+                EventStatus.INACTIVE,
+                LocalDateTime.now().plusHours(1)
+        );
+    }
+
     @Test
     void createEmitter_shouldAddEmitter() {
-
         SseEmitter emitter = service.createEmitter();
 
         assertThat(emitter).isNotNull();
@@ -36,15 +47,11 @@ class SseEmitterServiceTest {
 
     @Test
     void emitUpdate_shouldSendEventToAllEmitters() throws Exception {
-        // given
         SseEmitter emitter = spy(new SseEmitter(0L));
         service.getEmitters().add(emitter);
-        // when
-        SportEvent event = new SportEvent();
-        event.setId(UUID.randomUUID());
-        event.setName(TEST_MATCH);
-        event.setSport(FOOTBALL);
-        // then
+
+        SportEvent event = createEvent(TEST_MATCH, FOOTBALL);
+
         service.emitUpdate(event);
 
         verify(emitter, atLeastOnce()).send(any(SseEmitter.SseEventBuilder.class));
@@ -52,20 +59,17 @@ class SseEmitterServiceTest {
 
     @Test
     void emitUpdate_shouldRemoveEmitterIfSendFails() throws Exception {
-        // given
         SseEmitter badEmitter = mock(SseEmitter.class);
-        doThrow(new IOException("fail")).when(badEmitter).send(any(SseEmitter.SseEventBuilder.class));
+        doThrow(new IOException("fail"))
+                .when(badEmitter)
+                .send(any(SseEmitter.SseEventBuilder.class));
 
         service.getEmitters().add(badEmitter);
 
-        SportEvent event = new SportEvent();
-        event.setId(UUID.randomUUID());
-        event.setName(BROKEN_MATCH);
-        event.setSport(BASKETBALL);
-        // when
+        SportEvent event = createEvent(BROKEN_MATCH, BASKETBALL);
+
         service.emitUpdate(event);
-        // then
+
         assertThat(service.getEmitters()).isEmpty();
     }
-
 }

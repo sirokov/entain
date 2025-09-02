@@ -24,6 +24,6 @@ public record SportEventResponse(
         LocalDateTime startTime
 ) {
     public static SportEventResponse from(SportEvent event) {
-        return new SportEventResponse(event.getId(), event.getName(), event.getSport(), event.getStatus(), event.getStartTime());
+        return new SportEventResponse(event.id(), event.name(), event.sport(), event.status(), event.startTime());
     }
 }

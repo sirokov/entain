@@ -78,7 +78,7 @@ class SportEventControllerTest {
 
     @Test
     void createEvent_success() throws Exception {
-        CreateEventRequest request = new CreateEventRequest(WORLD_FINAL, FOOTBALL, event.getStartTime());
+        CreateEventRequest request = new CreateEventRequest(WORLD_FINAL, FOOTBALL, event.startTime());
         SportEvent createdEvent = new SportEvent(eventId, request.getName(), request.getSport(), EventStatus.INACTIVE, request.getStartTime());
 
         when(service.createEvent(any(SportEvent.class))).thenReturn(createdEvent);
@@ -122,8 +122,8 @@ class SportEventControllerTest {
         mockMvc.perform(get("/events"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(event.getId().toString()))
-                .andExpect(jsonPath("$[1].id").value(anotherEvent.getId().toString()));
+                .andExpect(jsonPath("$[0].id").value(event.id().toString()))
+                .andExpect(jsonPath("$[1].id").value(anotherEvent.id().toString()));
     }
 
     @Test
@@ -131,10 +131,10 @@ class SportEventControllerTest {
         UpdateStatusRequest request = new UpdateStatusRequest(EventStatus.ACTIVE);
         SportEvent updatedEvent = new SportEvent(
                 eventId,
-                event.getName(),
-                event.getSport(),
+                event.name(),
+                event.sport(),
                 EventStatus.ACTIVE,
-                event.getStartTime()
+                event.startTime()
         );
 
         when(service.changeStatus(eq(eventId), eq(EventStatus.ACTIVE)))

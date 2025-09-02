@@ -8,35 +8,42 @@ import com.entain.event.SportEventCreated;
 import com.entain.event.SportEventStatusChanged;
 import com.entain.exception.EventNotFoundException;
 import com.entain.validation.EventValidationRule;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class SportEventService {
 
     private final SportEventDAO sportEventDAO;
     private final DomainEventPublisher eventPublisher;
     private final List<EventValidationRule> validationRules;
 
-    public SportEventService(SportEventDAO sportEventDAO,
-                             DomainEventPublisher eventPublisher, List<EventValidationRule> validationRules) {
-        this.sportEventDAO = sportEventDAO;
-        this.eventPublisher = eventPublisher;
-        this.validationRules = validationRules;
-    }
-
     public SportEvent createEvent(SportEvent event) {
-
         for (EventValidationRule rule : validationRules) {
             rule.validate(event, null);
         }
 
-        event.setId(UUID.randomUUID());
-        sportEventDAO.save(event);
-        eventPublisher.publish(new SportEventCreated(event));
-        return event;
+        event = new SportEvent(
+                UUID.randomUUID(),
+                event.name(),
+                event.sport(),
+                event.status(),
+                event.startTime()
+        );
+
+        SportEvent stored = sportEventDAO.save(event);
+
+        if (!stored.equals(event)) {
+            throw new IllegalStateException(
+                    "Event with id " + event.id() + " already exists. Conflict detected."
+            );
+        }
+        eventPublisher.publish(new SportEventCreated(stored));
+        return stored;
     }
 
     public List<SportEvent> getEvents(EventStatus status, String sport) {
@@ -55,16 +62,21 @@ public class SportEventService {
             rule.validate(event, newStatus);
         }
 
+        // Update status immutably in DAO
         sportEventDAO.updateStatus(id, newStatus);
-        event.setStatus(newStatus);
+
+        // Fetch updated event to return (DAO returns new immutable instance)
+        event = sportEventDAO.findById(id)
+                .orElseThrow(() -> new EventNotFoundException(id));
 
         eventPublisher.publish(new SportEventStatusChanged(
-                event.getId(),
+                event.id(),
                 newStatus,
-                event.getName(),
-                event.getSport(),
-                event.getStartTime()
+                event.name(),
+                event.sport(),
+                event.startTime()
         ));
+
         return event;
     }
 }
