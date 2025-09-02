@@ -56,6 +56,32 @@ The project is designed with **flexibility and future extensibility** in mind:
 
 ---
 
+
+## Validation Rules
+
+Business validation is implemented using a **lightweight rule-based approach**:
+
+- `EventValidationRule` — core interface for all rules.
+- `BasicEventValidationRule` — simplified interface for rules that don’t depend on status transitions.
+- **Rules implemented so far**:
+   - `SportTypeRule` — validates that sport type is allowed (from enum or config).
+   - `StatusChangeRule` — validates allowed status transitions:
+      - `INACTIVE → ACTIVE` only if start time is not in the past
+      - `INACTIVE → FINISHED` forbidden
+      - `ACTIVE → FINISHED` allowed
+      - `FINISHED` is a terminal state
+
+### Why this approach?
+
+- Few rules are expected (3–4 in near future), so a complex rules engine is unnecessary.
+- Each rule is a **separate class**, easy to read and unit-test.
+- Adding new rules requires no changes in existing code, only a new class.
+- Keeps the service layer clean and decoupled from validation logic.
+
+This design provides the right balance of **simplicity, clarity, and extensibility**.
+
+---
+
 ## Event-Driven Architecture & SSE Extensibility
 
 The project uses a **domain event-driven approach** to decouple business logic from delivery mechanisms like SSE:
