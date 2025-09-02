@@ -7,7 +7,6 @@ import com.entain.dto.ErrorResponse;
 import com.entain.dto.SportEventResponse;
 import com.entain.dto.UpdateStatusRequest;
 import com.entain.service.SportEventService;
-import com.entain.service.SportValidationService;
 import com.entain.service.SseEmitterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

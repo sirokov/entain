@@ -13,6 +13,11 @@ import static org.mockito.Mockito.*;
 
 class SseEmitterServiceTest {
 
+    private static final String TEST_MATCH = "Test match";
+    private static final String FOOTBALL = "Football";
+    private static final String BROKEN_MATCH = "Broken match";
+    private static final String BASKETBALL = "Basketball";
+
     private SseEmitterService service;
 
     @BeforeEach
@@ -37,8 +42,8 @@ class SseEmitterServiceTest {
         // when
         SportEvent event = new SportEvent();
         event.setId(UUID.randomUUID());
-        event.setName("Test match");
-        event.setSport("Football");
+        event.setName(TEST_MATCH);
+        event.setSport(FOOTBALL);
         // then
         service.emitUpdate(event);
 
@@ -55,8 +60,8 @@ class SseEmitterServiceTest {
 
         SportEvent event = new SportEvent();
         event.setId(UUID.randomUUID());
-        event.setName("Broken match");
-        event.setSport("Basketball");
+        event.setName(BROKEN_MATCH);
+        event.setSport(BASKETBALL);
         // when
         service.emitUpdate(event);
         // then

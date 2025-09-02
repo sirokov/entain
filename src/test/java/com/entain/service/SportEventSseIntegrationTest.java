@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SportEventSseIntegrationTest {
 
     private static final String INTEGRATION_MATCH = "Integration match";
+    private static final String FOOTBALL = "Football";
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,7 +42,7 @@ class SportEventSseIntegrationTest {
         SportEvent event = new SportEvent(
                 UUID.randomUUID(),
                 INTEGRATION_MATCH,
-                "Football",
+                FOOTBALL,
                 EventStatus.INACTIVE,
                 null
         );
